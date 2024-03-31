@@ -189,6 +189,7 @@ fun Screen(){
                 //启用可滚动是为了解决横屏时部件显示不正常的问题
                 .verticalScroll(rememberScrollState())
         ) {
+            Spacer(modifier=Modifier.size(20.dp))
             Bulb(isOn = viewModel.isOn.value) //灯泡显示部分
             InformationCard( //信息卡片部分
                 isOn = viewModel.isOn.value,
