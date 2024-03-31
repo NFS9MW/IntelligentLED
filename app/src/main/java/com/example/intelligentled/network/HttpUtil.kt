@@ -27,7 +27,7 @@ object HttpUtil{
                 //trimIndent() 是 Kotlin 中的一个字符串处理函数，它的作用是移除字符串中每一行开头的空白字符，直到非空白字符为止，并返回一个新的字符串。
                 val json = """
                 {
-                    "uid": "input your own private key",
+                    "uid": "input your private key here",
                     "topic": "led001",
                     "type": 3,
                     "msg": "$operation"
@@ -76,7 +76,7 @@ object HttpUtil{
             try {
                 //使用GET接口传递参数
                 val urlBuilder = "https://apis.bemfa.com/va/getmsg".toHttpUrlOrNull()?.newBuilder()
-                urlBuilder?.addQueryParameter("uid", "input your own private key")
+                urlBuilder?.addQueryParameter("uid", "input your private key here")
                 urlBuilder?.addQueryParameter("topic", "led001")
                 urlBuilder?.addQueryParameter("type", 3.toString())
 
@@ -121,7 +121,7 @@ object HttpUtil{
             try {
                 //使用GET接口传递参数
                 val urlBuilder = "https://apis.bemfa.com/va/online".toHttpUrlOrNull()?.newBuilder()
-                urlBuilder?.addQueryParameter("uid", "input your own private key")
+                urlBuilder?.addQueryParameter("uid", "input your private key here")
                 urlBuilder?.addQueryParameter("topic", "led001")
                 urlBuilder?.addQueryParameter("type", 3.toString())
 

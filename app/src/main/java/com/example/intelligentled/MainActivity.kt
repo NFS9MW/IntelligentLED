@@ -7,6 +7,11 @@ import android.os.Message
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -22,8 +27,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.MaterialTheme
@@ -149,7 +156,6 @@ class MainActivity : ComponentActivity() {
 //组件拼装部分
 @Composable
 fun Screen(){
-
     //Compose中获取viewModel的方式，需要引入"androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0"
     val viewModel:StateViewModel= viewModel()
 
@@ -178,7 +184,10 @@ fun Screen(){
         Column(
             verticalArrangement = Arrangement.SpaceEvenly,
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier=Modifier.fillMaxSize()
+            modifier= Modifier
+                .fillMaxSize()
+                //启用可滚动是为了解决横屏时部件显示不正常的问题
+                .verticalScroll(rememberScrollState())
         ) {
             Bulb(isOn = viewModel.isOn.value) //灯泡显示部分
             InformationCard( //信息卡片部分
@@ -195,16 +204,44 @@ fun Screen(){
 //灯泡显示部分
 @Composable
 fun Bulb(isOn: Boolean){
-    Box(modifier = Modifier.wrapContentSize()){
-        if (isOn){
-            Image(
-                painter = painterResource(id = R.drawable.bulb_light),
-                contentDescription = "灯泡亮起")
-        }else{
+    Box(
+        modifier = Modifier
+            .wrapContentWidth()
+            .height(300.dp)
+    ){
+        //淡入淡出动画
+        AnimatedVisibility(
+            visible = isOn,
+            enter = fadeIn(),
+            exit = fadeOut(),
+            label = "灯泡状态发生变化时的淡入淡出动画"
+        ) {
+             Image(
+                 painter = painterResource(id = R.drawable.bulb_light),
+                 contentDescription = "灯泡亮起")
+        }
+
+        //淡入淡出动画
+        AnimatedVisibility(
+            visible = !isOn,
+            enter = fadeIn(),
+            exit = fadeOut(),
+            label = "灯泡状态发生变化时的淡入淡出动画"
+        ) {
             Image(
                 painter = painterResource(id = R.drawable.bulb_dark),
                 contentDescription = "灯泡熄灭")
+
         }
+//        if (isOn){
+//            Image(
+//                painter = painterResource(id = R.drawable.bulb_light),
+//                contentDescription = "灯泡亮起")
+//        }else{
+//            Image(
+//                painter = painterResource(id = R.drawable.bulb_dark),
+//                contentDescription = "灯泡熄灭")
+//        }
     }
 }
 
@@ -404,72 +441,88 @@ fun OperationButton(viewModel: StateViewModel){
         }
 
         Spacer(modifier = Modifier.height(30.dp))
-        
+
+
+        //多包裹了一层容器，以防止按键的出现和消失导致整体布局的上移和下移
         Row(
-            horizontalArrangement = Arrangement.SpaceEvenly,
             modifier= Modifier
                 .fillMaxWidth()
-                .wrapContentHeight()
+                .height(50.dp) //固定高度
                 .padding(horizontal = 80.dp)
         ) {
-            Button(onClick = {
-                val resultFuture = HttpUtil.sendOperation("bright")
-
-                resultFuture.thenAccept { code ->
-                    if (code != null) {
-                        if (code==0){
-                            viewModel.deviceIsOn()
-                        }else{
-                            Log.w("HttpUtil.sendOperation",code.toString())
-                        }
-                    } else {
-                        // 处理结果为 null 的情况
-                        Log.w("HttpUtil.sendOperation","code is null")
-                    }
-                }.exceptionally { ex ->
-                    // 处理异常情况
-                    Log.w("resultFuture","Exception occurred: ${ex.message}")
-                    null
-                }
-            },
-                modifier = Modifier.weight(1f)
+            //为按键设定出场和离场动画
+            AnimatedVisibility(
+                visible = viewModel.isOn.value,
+                enter = slideInVertically(),
+                exit = slideOutVertically()
             ) {
-                Text(
-                    text = "亮",
-                    fontSize = 16.sp
-                )
-            }
+                Row(
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    modifier= Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight()
+                    //.padding(horizontal = 80.dp)
+                ) {
+                    Button(onClick = {
+                        val resultFuture = HttpUtil.sendOperation("bright")
 
-            Spacer(modifier = Modifier.width(20.dp))
-
-            Button(onClick = {
-                val resultFuture = HttpUtil.sendOperation("dark")
-
-                resultFuture.thenAccept { code ->
-                    if (code != null) {
-                        if (code==0){
-                            viewModel.deviceIsOn()
-                        }else{
-                            Log.w("HttpUtil.sendOperation",code.toString())
+                        resultFuture.thenAccept { code ->
+                            if (code != null) {
+                                if (code==0){
+                                    viewModel.deviceIsOn()
+                                }else{
+                                    Log.w("HttpUtil.sendOperation",code.toString())
+                                }
+                            } else {
+                                // 处理结果为 null 的情况
+                                Log.w("HttpUtil.sendOperation","code is null")
+                            }
+                        }.exceptionally { ex ->
+                            // 处理异常情况
+                            Log.w("resultFuture","Exception occurred: ${ex.message}")
+                            null
                         }
-                        // 在这里处理 result
-                        // 例如，根据 result 做不同的操作
-                    } else {
-                        // 处理结果为 null 的情况
-                        Log.w("HttpUtil.sendOperation","code is null")
+                    },
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text(
+                            text = "亮",
+                            fontSize = 16.sp
+                        )
                     }
-                }.exceptionally { ex ->
-                    // 处理异常情况
-                    Log.w("resultFuture","Exception occurred: ${ex.message}")
-                    null
+
+                    Spacer(modifier = Modifier.width(20.dp))
+
+                    Button(onClick = {
+                        val resultFuture = HttpUtil.sendOperation("dark")
+
+                        resultFuture.thenAccept { code ->
+                            if (code != null) {
+                                if (code==0){
+                                    viewModel.deviceIsOn()
+                                }else{
+                                    Log.w("HttpUtil.sendOperation",code.toString())
+                                }
+                                // 在这里处理 result
+                                // 例如，根据 result 做不同的操作
+                            } else {
+                                // 处理结果为 null 的情况
+                                Log.w("HttpUtil.sendOperation","code is null")
+                            }
+                        }.exceptionally { ex ->
+                            // 处理异常情况
+                            Log.w("resultFuture","Exception occurred: ${ex.message}")
+                            null
+                        }
+                    },
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text(
+                            text = "暗",
+                            fontSize = 16.sp
+                        )
+                    }
                 }
-            },
-                modifier = Modifier.weight(1f)
-            ) {
-                Text(
-                    text = "暗",
-                    fontSize = 16.sp
-                )
             }
         }
     }
