@@ -35,8 +35,12 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -51,6 +55,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.intelligentled.network.HttpUtil
 import com.example.intelligentled.ui.theme.IntelligentLEDTheme
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
 
@@ -156,6 +161,8 @@ class MainActivity : ComponentActivity() {
 //组件拼装部分
 @Composable
 fun Screen(){
+    //用于弹出SnackBar
+    val snackbarHostState = remember { SnackbarHostState() }
     //Compose中获取viewModel的方式，需要引入"androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0"
     val viewModel:StateViewModel= viewModel()
 
@@ -196,7 +203,10 @@ fun Screen(){
                 isOnline = viewModel.isOnline.value,
                 time = viewModel.updateTime.value
             )
-            OperationButton(viewModel=viewModel) //操作按钮部分
+            OperationButton(
+                viewModel=viewModel,
+                snackbarHostState=snackbarHostState
+            ) //操作按钮部分
             Spacer(modifier = Modifier.size(50.dp)) //留白，方便操作
         }
     }
@@ -303,7 +313,12 @@ fun InformationCard(isOn: Boolean,isOnline:Boolean,time:String){
 
 //操作按钮部分
 @Composable
-fun OperationButton(viewModel: StateViewModel){
+fun OperationButton(
+    viewModel: StateViewModel,
+    snackbarHostState: SnackbarHostState
+    ){
+    //协程作用域用于弹出SnackBar
+    val coroutineScope = rememberCoroutineScope()
 
     Column(
         verticalArrangement = Arrangement.SpaceEvenly,
@@ -328,14 +343,41 @@ fun OperationButton(viewModel: StateViewModel){
                                 viewModel.deviceIsOff()
                             }else{
                                 Log.w("HttpUtil.sendOperation",code.toString())
+                                coroutineScope.launch {
+                                    snackbarHostState
+                                        .showSnackbar(
+                                            "HttpUtil.sendOperation:$code",
+                                            null,
+                                            false,
+                                            SnackbarDuration.Short
+                                        )
+                                }
                             }
                         } else {
                             // 处理结果为 null 的情况
                             Log.w("HttpUtil.sendOperation","code is null")
+                            coroutineScope.launch {
+                                snackbarHostState
+                                    .showSnackbar(
+                                        "HttpUtil.sendOperation:null",
+                                        null,
+                                        false,
+                                        SnackbarDuration.Short
+                                    )
+                            }
                         }
                     }.exceptionally { ex ->
                         // 处理异常情况
                         Log.w("resultFuture","Exception occurred: ${ex.message}")
+                        coroutineScope.launch {
+                            snackbarHostState
+                                .showSnackbar(
+                                    "HttpUtil.sendOperation:${ex.message}",
+                                    null,
+                                    false,
+                                    SnackbarDuration.Short
+                                )
+                        }
                         null
                     }
                 },
@@ -356,14 +398,41 @@ fun OperationButton(viewModel: StateViewModel){
                                 viewModel.deviceIsOn()
                             }else{
                                 Log.w("HttpUtil.sendOperation",code.toString())
+                                coroutineScope.launch {
+                                    snackbarHostState
+                                        .showSnackbar(
+                                            "HttpUtil.sendOperation:$code",
+                                            null,
+                                            false,
+                                            SnackbarDuration.Short
+                                        )
+                                }
                             }
                         } else {
                             // 处理结果为 null 的情况
                             Log.w("HttpUtil.sendOperation","code is null")
+                            coroutineScope.launch {
+                                snackbarHostState
+                                    .showSnackbar(
+                                        "HttpUtil.sendOperation:null",
+                                        null,
+                                        false,
+                                        SnackbarDuration.Short
+                                    )
+                            }
                         }
                     }.exceptionally { ex ->
                         // 处理异常情况
                         Log.w("resultFuture","Exception occurred: ${ex.message}")
+                        coroutineScope.launch {
+                            snackbarHostState
+                                .showSnackbar(
+                                    "HttpUtil.sendOperation:${ex.message}",
+                                    null,
+                                    false,
+                                    SnackbarDuration.Short
+                                )
+                        }
                         null
                     }
                 },

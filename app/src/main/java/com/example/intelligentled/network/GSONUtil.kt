@@ -18,11 +18,16 @@ object GSONUtil {
         val gson = Gson()
         val response = gson.fromJson(jsonData, StateResponse::class.java)
 
-
-        return mapOf(
-            "code" to response.code.toString(),
-            "msg" to response.data[0].msg,
-            "time" to response.data[0].time
+        //该警告是错误的
+        if(response.data!=null){
+            return mapOf(
+                "code" to response.code.toString(),
+                "msg" to response.data[0].msg,
+                "time" to response.data[0].time
+            )
+        }else return mapOf(
+            //当请求数据错误时，只返回报错代码
+            "code" to response.code.toString()
         )
     }
 

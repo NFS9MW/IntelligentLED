@@ -135,6 +135,10 @@ object HttpUtil{
                 val response = client.newCall(request).execute()
                 val responseData= response.body?.string()
 
+                if (responseData != null) {
+                    Log.w("sendOnlineRequest",responseData)
+                }
+
                 if (responseData!=null){
                     // 在协程中解析 responseData
                     GlobalScope.launch {
