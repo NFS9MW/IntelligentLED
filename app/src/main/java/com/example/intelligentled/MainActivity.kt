@@ -6,6 +6,7 @@ import android.os.Handler
 import android.os.Looper
 import android.os.Message
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.AnimatedVisibility
@@ -53,6 +54,9 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.intelligentled.network.HttpUtil
 import com.example.intelligentled.ui.theme.IntelligentLEDTheme
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
 
@@ -319,6 +323,9 @@ fun OperationButton(
             .fillMaxWidth()
             .wrapContentHeight()
     ) {
+        //手动切换回主线程，这里开启了主线程的协程
+        val scope = CoroutineScope(Dispatchers.Main)
+
         Row(
             horizontalArrangement = Arrangement.Center,
             modifier= Modifier
@@ -330,20 +337,42 @@ fun OperationButton(
                 ExtendedFloatingActionButton(onClick = {
                     val resultFuture = HttpUtil.sendOperation("off")
 
+                    //注意，以下代码块运行在子线程中，若要弹出Toast，需要切换回主线程
                     resultFuture.thenAccept { code ->
                         if (code != null) {
                             if (code==0){
                                 viewModel.deviceIsOff()
                             }else{
                                 Log.w("HttpUtil.sendOperation",code.toString())
+                                scope.launch {
+                                    Toast.makeText(
+                                        MyApplication.context,
+                                        "报错代码 $code",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
                             }
                         } else {
                             // 处理结果为 null 的情况
                             Log.w("HttpUtil.sendOperation","code is null")
+                            scope.launch {
+                                Toast.makeText(
+                                    MyApplication.context,
+                                    "code is null",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
                         }
                     }.exceptionally { ex ->
                         // 处理异常情况
                         Log.w("resultFuture","Exception occurred: ${ex.message}")
+                        scope.launch {
+                            Toast.makeText(
+                                MyApplication.context,
+                                "Exception occurred: ${ex.message}",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
                         null
                     }
                 },
@@ -358,20 +387,42 @@ fun OperationButton(
                 ExtendedFloatingActionButton(onClick = {
                     val resultFuture = HttpUtil.sendOperation("on")
 
+                    //注意，以下代码块运行在子线程中，若要弹出Toast，需要切换回主线程
                     resultFuture.thenAccept { code ->
                         if (code != null) {
                             if (code==0){
                                 viewModel.deviceIsOn()
                             }else{
                                 Log.w("HttpUtil.sendOperation",code.toString())
+                                scope.launch {
+                                    Toast.makeText(
+                                        MyApplication.context,
+                                        "报错代码 $code",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
                             }
                         } else {
                             // 处理结果为 null 的情况
                             Log.w("HttpUtil.sendOperation","code is null")
+                            scope.launch {
+                                Toast.makeText(
+                                    MyApplication.context,
+                                    "code is null",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
                         }
                     }.exceptionally { ex ->
                         // 处理异常情况
                         Log.w("resultFuture","Exception occurred: ${ex.message}")
+                        scope.launch {
+                            Toast.makeText(
+                                MyApplication.context,
+                                "Exception occurred: ${ex.message}",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
                         null
                     }
                 },
@@ -418,14 +469,35 @@ fun OperationButton(
                                     viewModel.deviceIsOn()
                                 }else{
                                     Log.w("HttpUtil.sendOperation",code.toString())
+                                    scope.launch {
+                                        Toast.makeText(
+                                            MyApplication.context,
+                                            "报错代码 $code",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
                                 }
                             } else {
                                 // 处理结果为 null 的情况
                                 Log.w("HttpUtil.sendOperation","code is null")
+                                scope.launch {
+                                    Toast.makeText(
+                                        MyApplication.context,
+                                        "code is null",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
                             }
                         }.exceptionally { ex ->
                             // 处理异常情况
                             Log.w("resultFuture","Exception occurred: ${ex.message}")
+                            scope.launch {
+                                Toast.makeText(
+                                    MyApplication.context,
+                                    "Exception occurred: ${ex.message}",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
                             null
                         }
                     },
@@ -448,16 +520,35 @@ fun OperationButton(
                                     viewModel.deviceIsOn()
                                 }else{
                                     Log.w("HttpUtil.sendOperation",code.toString())
+                                    scope.launch {
+                                        Toast.makeText(
+                                            MyApplication.context,
+                                            "报错代码 $code",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
                                 }
-                                // 在这里处理 result
-                                // 例如，根据 result 做不同的操作
                             } else {
                                 // 处理结果为 null 的情况
                                 Log.w("HttpUtil.sendOperation","code is null")
+                                scope.launch {
+                                    Toast.makeText(
+                                        MyApplication.context,
+                                        "code is null",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
                             }
                         }.exceptionally { ex ->
                             // 处理异常情况
                             Log.w("resultFuture","Exception occurred: ${ex.message}")
+                            scope.launch {
+                                Toast.makeText(
+                                    MyApplication.context,
+                                    "Exception occurred: ${ex.message}",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
                             null
                         }
                     },
