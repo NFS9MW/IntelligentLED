@@ -1,6 +1,8 @@
 package com.example.intelligentled.network
 
+import android.content.Context
 import android.util.Log
+import com.example.intelligentled.MyApplication
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -22,13 +24,18 @@ object HttpUtil{
 
         thread {
             try {
+                //取出持久化保存的数据
+                val sp=MyApplication.context.getSharedPreferences("data", Context.MODE_PRIVATE)
+                val key:String?=sp.getString("key","key is null")
+                val theme:String?=sp.getString("theme","theme is null")
+
                 val client = OkHttpClient()
 
                 //trimIndent() 是 Kotlin 中的一个字符串处理函数，它的作用是移除字符串中每一行开头的空白字符，直到非空白字符为止，并返回一个新的字符串。
                 val json = """
                 {
-                    "uid": "input your own private key here",
-                    "topic": "led002",
+                    "uid": "$key",
+                    "topic": "$theme",
                     "type": 3,
                     "msg": "$operation"
                 }
@@ -73,11 +80,16 @@ object HttpUtil{
         val future=CompletableFuture<Map<String,String>>()
 
         thread {
+            //取出持久化保存的数据
+            val sp=MyApplication.context.getSharedPreferences("data", Context.MODE_PRIVATE)
+            val key:String?=sp.getString("key","key is null")
+            val theme:String?=sp.getString("theme","theme is null")
+
             try {
                 //使用GET接口传递参数
                 val urlBuilder = "https://apis.bemfa.com/va/getmsg".toHttpUrlOrNull()?.newBuilder()
-                urlBuilder?.addQueryParameter("uid", "input your own private key here")
-                urlBuilder?.addQueryParameter("topic", "led002")
+                urlBuilder?.addQueryParameter("uid", "$key")
+                urlBuilder?.addQueryParameter("topic", "$theme")
                 urlBuilder?.addQueryParameter("type", 3.toString())
 
                 val url = urlBuilder?.build().toString()
@@ -118,11 +130,16 @@ object HttpUtil{
         val future=CompletableFuture<Map<String,String>>()
 
         thread {
+            //取出持久化保存的数据
+            val sp=MyApplication.context.getSharedPreferences("data", Context.MODE_PRIVATE)
+            val key:String?=sp.getString("key","key is null")
+            val theme:String?=sp.getString("theme","theme is null")
+
             try {
                 //使用GET接口传递参数
                 val urlBuilder = "https://apis.bemfa.com/va/online".toHttpUrlOrNull()?.newBuilder()
-                urlBuilder?.addQueryParameter("uid", "input your own private key here")
-                urlBuilder?.addQueryParameter("topic", "led002")
+                urlBuilder?.addQueryParameter("uid", "$key")
+                urlBuilder?.addQueryParameter("topic", "$theme")
                 urlBuilder?.addQueryParameter("type", 3.toString())
 
                 val url = urlBuilder?.build().toString()

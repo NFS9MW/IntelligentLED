@@ -1,5 +1,6 @@
 package com.example.intelligentled
 
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -14,6 +15,7 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -56,6 +58,7 @@ class MainActivity : ComponentActivity() {
 
     private lateinit var runnable: Runnable
 
+    //由于StateViewModel是单例类，所以这里获取的viewModel实例与Compose中获取的相同
     val viewModel by lazy { ViewModelProvider(this)[StateViewModel::class.java] }
     //定义定时任务
     private val handler= object : Handler(Looper.getMainLooper()){
@@ -143,8 +146,8 @@ class MainActivity : ComponentActivity() {
             handler.sendMessage(message)
         }
 
-        //启动定时器
-        handler.post(runnable)
+        //1000毫秒后启动定时器
+        handler.postDelayed(runnable,1000)
     }
 
     override fun onDestroy() {
@@ -234,15 +237,6 @@ fun Bulb(isOn: Boolean){
                 contentDescription = "灯泡熄灭")
 
         }
-//        if (isOn){
-//            Image(
-//                painter = painterResource(id = R.drawable.bulb_light),
-//                contentDescription = "灯泡亮起")
-//        }else{
-//            Image(
-//                painter = painterResource(id = R.drawable.bulb_dark),
-//                contentDescription = "灯泡熄灭")
-//        }
     }
 }
 
@@ -262,6 +256,11 @@ fun InformationCard(isOn: Boolean,isOnline:Boolean,time:String){
                 .fillMaxWidth()
                 .wrapContentHeight()
                 .padding(50.dp)
+                .clickable {
+                    val intent= Intent(MyApplication.context,SetInformationActivity::class.java)
+                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK) //在Activity外启动需要此标志位
+                    MyApplication.context.startActivity(intent)
+                }
         ) {
             Spacer(modifier = Modifier.size(10.dp))
             if (isOnline){
@@ -291,11 +290,19 @@ fun InformationCard(isOn: Boolean,isOnline:Boolean,time:String){
                     modifier = Modifier.fillMaxWidth()
                 )
             }
-            Text(
-                text = "数据更新时间: $time",
-                textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth()
-            )
+            if (time!=""){
+                Text(
+                    text = "数据更新时间: $time",
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }else{
+                Text(
+                    text = "点击以设置私钥和主题",
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
             Spacer(modifier = Modifier.size(10.dp))
         }
     }
@@ -377,69 +384,6 @@ fun OperationButton(
                     )
                 }
             }
-
-            //刷新按钮
-//            Button(onClick = {
-//                val stateFuture=HttpUtil.sendStateRequest()
-//                val onlineFuture=HttpUtil.sendOnlineRequest()
-//
-//                //刷新状态
-//                stateFuture.thenAccept {
-//                    val code=it["code"]
-//                    val msg=it["msg"]
-//                    val time=it["time"]
-//
-//                    if (code!=null){
-//                        //传回了正常数据
-//                        if (code.toInt()==0){
-//                            if (msg=="on"){
-//                                viewModel.deviceIsOn()
-//                            }else if (msg=="off"){
-//                                viewModel.deviceIsOff()
-//                            }
-//
-//                            if (time!=null){
-//                                viewModel.setUpdateTime(time)
-//                            }
-//                        }else{
-//                            Toast
-//                                .makeText(context,"code is $code",Toast.LENGTH_SHORT)
-//                                .show()
-//                        }
-//                    }else{
-//                        Toast.makeText(context,"code is null",Toast.LENGTH_SHORT).show()
-//                        // 处理结果为 null 的情况
-//                    }
-//                }.exceptionally { ex ->
-//                    Toast
-//                        .makeText(context,"Exception occurred: ${ex.message}",Toast.LENGTH_SHORT)
-//                        .show()
-//                    // 处理异常情况
-//                    null
-//                }
-//
-//                //刷新在线
-//                onlineFuture.thenAccept {
-//                    val code=it["code"]
-//                    val data=it["data"]
-//
-//                    if (code != null) {
-//                        if (code.toInt()==0){
-//                            //传回了正常数据
-//                            if (data.toBoolean()){
-//                                viewModel.deviceIsOnline()
-//                            }else{
-//                                viewModel.deviceIsOffline()
-//                            }
-//                        }
-//                    }else{
-//                        Toast.makeText(context,"code is null",Toast.LENGTH_SHORT).show()
-//                        // 处理结果为 null 的情况
-//                    }
-//                }
-//            }) {
-//                Text(text = "刷新")
-//            }
         }
 
         Spacer(modifier = Modifier.height(30.dp))
