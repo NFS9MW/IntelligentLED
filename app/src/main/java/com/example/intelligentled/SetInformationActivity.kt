@@ -10,12 +10,14 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.paddingFromBaseline
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExtendedFloatingActionButton
@@ -103,6 +105,7 @@ fun SettingPage(viewModel: InformationViewModel){
         InformationInputBox(viewModel=viewModel)
         Spacer(modifier = Modifier.height(50.dp))
         ConfirmButton(viewModel=viewModel)
+        Spacer(modifier = Modifier.height(50.dp))
     }
 }
 
@@ -132,77 +135,110 @@ fun InformationInputBox(viewModel: InformationViewModel){
 //私钥输入框
 @Composable
 fun KeyTextField(label:String,viewModel: InformationViewModel){
-    OutlinedTextField(
-        value = viewModel.key.value,
-        onValueChange = {
-            viewModel.setKey(it)
-        },
-        shape = MaterialTheme.shapes.large,
+    Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(65.dp),
-        label = {
-            Text(
-                text = label,
-                color = MaterialTheme.colorScheme.onBackground
+            .wrapContentHeight()
+    ) {
+        Spacer(modifier = Modifier.weight(1f))
+
+        OutlinedTextField(
+            value = viewModel.key.value,
+            onValueChange = {
+                viewModel.setKey(it)
+            },
+            shape = MaterialTheme.shapes.large,
+            modifier = Modifier
+                .weight(20f)
+                .height(65.dp),
+            label = {
+                Text(
+                    text = label,
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+            },
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedContainerColor = MaterialTheme.colorScheme.background,
+                unfocusedContainerColor = MaterialTheme.colorScheme.background,
+                disabledContainerColor = MaterialTheme.colorScheme.background,
+                focusedBorderColor = MaterialTheme.colorScheme.onBackground,//被选中时的下边框颜色
             )
-        },
-        colors = OutlinedTextFieldDefaults.colors(
-            focusedContainerColor = MaterialTheme.colorScheme.background,
-            unfocusedContainerColor = MaterialTheme.colorScheme.background,
-            disabledContainerColor = MaterialTheme.colorScheme.background,
-            focusedBorderColor = MaterialTheme.colorScheme.onBackground,//被选中时的下边框颜色
         )
-    )
+
+        Spacer(modifier = Modifier.weight(1f))
+    }
+
 }
 
 //主题输入框
 @Composable
 fun ThemeTextFiled(label:String,viewModel: InformationViewModel){
-    OutlinedTextField(
-        value = viewModel.theme.value,
-        onValueChange = {
-            viewModel.setTheme(it)
-        },
-        shape = MaterialTheme.shapes.large,
+    Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(65.dp),
-        label = {
-            Text(
-                text = label,
-                color = MaterialTheme.colorScheme.onBackground
+            .wrapContentHeight()
+    ) {
+        Spacer(modifier = Modifier.weight(1f))
+
+        OutlinedTextField(
+            value = viewModel.theme.value,
+            onValueChange = {
+                viewModel.setTheme(it)
+            },
+            shape = MaterialTheme.shapes.large,
+            modifier = Modifier
+                .weight(20f)
+                .height(65.dp),
+            label = {
+                Text(
+                    text = label,
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+            },
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedContainerColor = MaterialTheme.colorScheme.background,
+                unfocusedContainerColor = MaterialTheme.colorScheme.background,
+                disabledContainerColor = MaterialTheme.colorScheme.background,
+                focusedBorderColor = MaterialTheme.colorScheme.onBackground,//被选中时的下边框颜色
             )
-        },
-        colors = OutlinedTextFieldDefaults.colors(
-            focusedContainerColor = MaterialTheme.colorScheme.background,
-            unfocusedContainerColor = MaterialTheme.colorScheme.background,
-            disabledContainerColor = MaterialTheme.colorScheme.background,
-            focusedBorderColor = MaterialTheme.colorScheme.onBackground,//被选中时的下边框颜色
         )
-    )
+
+        Spacer(modifier = Modifier.weight(1f))
+    }
+
+
 }
 
 //确认按键
 @Composable
 fun ConfirmButton(viewModel: InformationViewModel){
-    ExtendedFloatingActionButton(
-        onClick = {
-            //使用SharedPreference来持久化存储EditText中的内容
-            val sp=MyApplication.context.getSharedPreferences("data", Context.MODE_PRIVATE).edit()
-
-            sp.putString("key",viewModel.key.value)
-            sp.putString("theme",viewModel.theme.value)
-            sp.apply() //注意最后需要调用apply()方法进行提交
-
-            Toast.makeText(MyApplication.context,"保存完毕",Toast.LENGTH_LONG).show()
-        },
+    Row(
         modifier = Modifier
-            .height(48.dp)
             .fillMaxWidth()
+            .wrapContentHeight()
     ) {
-        Text(
-            text = "按下保存",
-        )
+        Spacer(modifier = Modifier.weight(1f))
+
+        ExtendedFloatingActionButton(
+            onClick = {
+                //使用SharedPreference来持久化存储EditText中的内容
+                val sp=MyApplication.context.getSharedPreferences("data", Context.MODE_PRIVATE).edit()
+
+                sp.putString("key",viewModel.key.value)
+                sp.putString("theme",viewModel.theme.value)
+                sp.apply() //注意最后需要调用apply()方法进行提交
+
+                Toast.makeText(MyApplication.context,"保存完毕",Toast.LENGTH_LONG).show()
+            },
+            modifier = Modifier
+                .height(48.dp)
+                .weight(5f)
+        ) {
+            Text(
+                text = "按下保存",
+            )
+        }
+
+        Spacer(modifier = Modifier.weight(1f))
     }
 }

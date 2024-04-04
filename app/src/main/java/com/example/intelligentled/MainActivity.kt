@@ -28,7 +28,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
@@ -249,19 +248,20 @@ fun Bulb(isOn: Boolean){
 fun InformationCard(isOn: Boolean,isOnline:Boolean,time:String){
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center,
+        //horizontalArrangement = Arrangement.Center,
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
     ) {
+        Spacer(modifier = Modifier.weight(1f))
         OutlinedCard(
             modifier = Modifier
-                .clip(RoundedCornerShape(20.dp))
-                .fillMaxWidth()
                 .wrapContentHeight()
-                .padding(50.dp)
+                .weight(8f)
+                .clip(RoundedCornerShape(20.dp))
+                .padding(10.dp) //必须加入此padding，否则圆角部分无法显示
                 .clickable {
-                    val intent= Intent(MyApplication.context,SetInformationActivity::class.java)
+                    val intent = Intent(MyApplication.context, SetInformationActivity::class.java)
                         .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK) //在Activity外启动需要此标志位
                     MyApplication.context.startActivity(intent)
                 }
@@ -309,6 +309,7 @@ fun InformationCard(isOn: Boolean,isOnline:Boolean,time:String){
             }
             Spacer(modifier = Modifier.size(10.dp))
         }
+        Spacer(modifier = Modifier.weight(1f))
     }
 }
 
@@ -323,7 +324,7 @@ fun OperationButton(
             .fillMaxWidth()
             .wrapContentHeight()
     ) {
-        //手动切换回主线程，这里开启了主线程的协程
+        //用于手动切换回主线程，这里开启了主线程的协程作用域
         val scope = CoroutineScope(Dispatchers.Main)
 
         Row(
@@ -331,10 +332,11 @@ fun OperationButton(
             modifier= Modifier
                 .fillMaxWidth()
                 .wrapContentHeight()
-                .padding(horizontal = 100.dp)
         ) {
+            Spacer(modifier = Modifier.weight(2f))
             if (viewModel.isOn.value){
-                ExtendedFloatingActionButton(onClick = {
+                ExtendedFloatingActionButton(
+                    onClick = {
                     val resultFuture = HttpUtil.sendOperation("off")
 
                     //注意，以下代码块运行在子线程中，若要弹出Toast，需要切换回主线程
@@ -376,7 +378,7 @@ fun OperationButton(
                         null
                     }
                 },
-                    modifier=Modifier.weight(1f)
+                    modifier=Modifier.weight(5f)
                     ) {
                     Text(
                         text ="关闭",
@@ -426,15 +428,15 @@ fun OperationButton(
                         null
                     }
                 },
-                    modifier=Modifier.weight(1f)
+                    modifier=Modifier.weight(5f)
                 ) {
                     Text(
                         text ="开启",
                         fontSize = 20.sp
-                        //modifier=Modifier.fillMaxWidth(),
                     )
                 }
             }
+            Spacer(modifier = Modifier.weight(2f))
         }
 
         Spacer(modifier = Modifier.height(30.dp))
@@ -454,12 +456,11 @@ fun OperationButton(
                 exit = slideOutVertically()
             ) {
                 Row(
-                    horizontalArrangement = Arrangement.SpaceEvenly,
                     modifier= Modifier
                         .fillMaxWidth()
                         .wrapContentHeight()
-                    //.padding(horizontal = 80.dp)
                 ) {
+                    Spacer(modifier = Modifier.weight(1f))
                     Button(onClick = {
                         val resultFuture = HttpUtil.sendOperation("bright")
 
@@ -501,7 +502,7 @@ fun OperationButton(
                             null
                         }
                     },
-                        modifier = Modifier.weight(1f)
+                        modifier = Modifier.weight(3f)
                     ) {
                         Text(
                             text = "亮",
@@ -509,7 +510,7 @@ fun OperationButton(
                         )
                     }
 
-                    Spacer(modifier = Modifier.width(20.dp))
+                    Spacer(modifier = Modifier.weight(1f))
 
                     Button(onClick = {
                         val resultFuture = HttpUtil.sendOperation("dark")
@@ -552,13 +553,14 @@ fun OperationButton(
                             null
                         }
                     },
-                        modifier = Modifier.weight(1f)
+                        modifier = Modifier.weight(3f)
                     ) {
                         Text(
                             text = "暗",
                             fontSize = 16.sp
                         )
                     }
+                    Spacer(modifier = Modifier.weight(1f))
                 }
             }
         }
