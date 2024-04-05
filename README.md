@@ -14,13 +14,15 @@ For first-time use, click the OutlinedCard in the middle, input your own private
 ## 界面展示
 
 图片：
-![Screenshot_2024-04-02-00-04-00-103_com example in](https://github.com/NFS9MW/IntelligentLED/assets/91894057/4d38ca24-2fbf-4f37-ac2e-e6f43de948a5)
-![Screenshot_2024-04-02-00-04-03-945_com example in](https://github.com/NFS9MW/IntelligentLED/assets/91894057/bf525fdb-b5eb-4cab-92c3-7ccf4f21326d)
-![Screenshot_2024-04-02-00-04-16-443_com example in](https://github.com/NFS9MW/IntelligentLED/assets/91894057/29a4385e-ac6f-48a3-87ee-6f8438723abb)
-![Screenshot_2024-04-02-00-04-12-484_com example in](https://github.com/NFS9MW/IntelligentLED/assets/91894057/b7ce6666-1ecc-4013-b66b-5d741f900fd2)
-![Screenshot_2024-04-02-15-49-22-329_com example in](https://github.com/NFS9MW/IntelligentLED/assets/91894057/18a0c463-2df0-4dc1-8f83-cf692ecc6ae5)
-![IMG_20240402_155005](https://github.com/NFS9MW/IntelligentLED/assets/91894057/1b35419f-ec29-4a3e-93a4-38d0ff219f0b)
+![浅色未开启](https://gcore.jsdelivr.net/gh/NFS9MW/PicGo/repository/202404060006035.jpg)
 
+![浅色已开启](https://gcore.jsdelivr.net/gh/NFS9MW/PicGo/repository/202404060007384.jpg)
 
-视频：
-https://github.com/NFS9MW/IntelligentLED/assets/91894057/86194571-1336-4a11-a1f9-34975b0761dd
+![浅色信息部分](https://gcore.jsdelivr.net/gh/NFS9MW/PicGo/repository/202404060007468.jpg)
+
+![深色未开启](https://gcore.jsdelivr.net/gh/NFS9MW/PicGo/repository/202404060016757.jpeg)
+
+![深色已开启](https://gcore.jsdelivr.net/gh/NFS9MW/PicGo/repository/202404060016869.jpg)
+
+![深色信息部分](https://gcore.jsdelivr.net/gh/NFS9MW/PicGo/repository/202404060015328.jpg)
+
